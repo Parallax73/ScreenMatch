@@ -9,21 +9,23 @@ import java.util.*;
 
 public class Main {
 
-    private Scanner sc = new Scanner(System.in);
-    private ApiUsage apiUsage = new ApiUsage();
-    private SerializeData serializeData = new SerializeData();
-    private final String URL = "https://www.omdbapi.com/?t=";
-    private final String API_KEY = "&apikey=a6c449fa";
-    private List<ShowData> watchLater = new ArrayList<>();
-    private Map<ShowData,Double> userRateList = new HashMap<>();
+    private final Scanner sc = new Scanner(System.in);
+    private final ApiUsage apiUsage = new ApiUsage();
+    private final SerializeData serializeData = new SerializeData();
+    private final List<ShowData> watchLater = new ArrayList<>();
+    private final Map<ShowData,Double> userRateList = new HashMap<>();
 
 
     public void showMenu() throws JsonProcessingException {
 
       loop:  while (true) {
-            System.out.println("1 - Your lists\n2- Search for a Tv show or movie\n3- Rate a movie or Tv show\n0- Quit");
+            System.out.println("1 - Your lists\n2- Search for a Tv show or movie to add to your watchlist\n3- Rate a movie or Tv show\n0- Quit");
             var showName = sc.nextLine();
-            switch (showName){
+          String URL = "https://www.omdbapi.com/?t=";
+          String API_KEY = "&apikey=a6c449fa";
+          String nameT;
+          String json;
+          switch (showName){
 
                 case "1":
                     System.out.println("1- Watch later list\n2- Rated movies");
@@ -32,8 +34,8 @@ public class Main {
                     break ;
                 case "2":
                     System.out.println("Which Tv show or movie");
-                    var nameT = sc.nextLine();
-                    var json = apiUsage.getData(URL + nameT.replace(" ", "+") + API_KEY);
+                    nameT = sc.nextLine();
+                    json = apiUsage.getData(URL + nameT.replace(" ", "+") + API_KEY);
                     ShowData data = serializeData.getData(json, ShowData.class);
                     if (data.Title()==null||!nameT.equalsIgnoreCase(data.Title())) {
                         System.out.println(nameT +"doesn't exist or you may have written incorrectly");
@@ -52,8 +54,10 @@ public class Main {
                     var userRate = Double.valueOf(sc.nextLine());
                     userRateList.put(rateMovie,userRate);
                     System.out.println(rateMovie.Title()+" was rated "+ userRate);
-                    break ;
-                case "0":
+                    break;
+
+
+                    case "0":
                     break loop;
 
                 default:
@@ -62,36 +66,6 @@ public class Main {
             }
 
         }
-
-
-
-
-
-
-
-        /*  	List<SeasonData> seasons = new ArrayList<>();
-        	for (int i = 1; i<data.seasonN();i++){
-                json = apiUsage.getData(URL + showName.replace(" ", "+") + "&season="+i+ API_KEY);
-        		SeasonData seasonData = serializeData.getData(json, SeasonData.class);
-        		seasons.add(seasonData);
-        	}
-        	seasons.forEach(System.out::println);
-
-            seasons.forEach(s -> s.episodes()
-                    .forEach(e -> System.out.println(e.title())));
-
-            List<EpData> epDataListM = seasons.stream()
-                    .flatMap(s -> s.episodes().stream())
-                    .collect(Collectors.toList());
-
-           epDataListM.stream()
-                   .filter(e -> !e.rate().equalsIgnoreCase("N/A"))
-                   .sorted(Comparator.comparing(EpData::rate).reversed())
-                   .limit(5)
-                   .forEach(System.out::println);
-*/
-
-        // epDataListM.forEach(System.out::println);
     }
 
     private void nested_switch(String c) {
@@ -111,11 +85,6 @@ public class Main {
             }else {System.out.println("Wrong!!!! Try again");}
         }
 
-
-
-        private void nested_switch2(){
-
-        }
 }
 
 
